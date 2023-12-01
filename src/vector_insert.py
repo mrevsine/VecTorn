@@ -141,7 +141,7 @@ def get_insertions(full_seq, vector_names, vector_seqs, vector_positions, n_samp
 # needed files
 vector_dir = "data/vectors/"
 vector_pos_bed = vector_dir + "clone_vec.bed"
-reference_seq_fa_file = "data/chr22_14-15M.fa"
+reference_seq_fa_file = "data/ref/chr22_14M_15M.fa"
 
 # read vector position file
 with open(vector_pos_bed, "r") as f:
@@ -250,7 +250,7 @@ ref_seq = ref_seqs[0]
 run_seed = 123
 run_n_samples = 100
 run_insert_length = 10000
-run_out_fa_file = "results/100_samples_10k_length_123_seed.fa"
+run_out_fa_file = "data/simulated_reads/100_samples_10k_length_123_seed_b.fa"
 #run_out_fa_file = "results/" + str(run_n_samples) + "samples_" + str(run_seed) + "seed.fa"
 recomb_names, recomb_seqs = get_insertions(full_seq = ref_seq, \
                                            vector_names = vectors,

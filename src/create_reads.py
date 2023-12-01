@@ -1,13 +1,17 @@
 import random
 import os
 
-random.seed(23)
+seed_num = 23
+random.seed(seed_num)
 
-fa_file_name = "chr22_14M_15M.fa"
+data_path = "data/"
+ref_path = data_path + "ref/"
+sim_path = data_path + "simulated_reads/"
+fa_file_name = ref_path + "chr22_14M_15M.fa"
 fa_seq_name = "chr22:14000000-14999999"
 fa_seq_len = 1000000
-reads_1_name = "reads_1.fastq"
-reads_2_name = "reads_2.fastq"
+reads_1_name = sim_path + "reads_1.fastq"
+reads_2_name = sim_path + "reads_2.fastq"
 
 pos_snps = {}
 
@@ -30,7 +34,6 @@ for i in range(10):
         pos_counts[base] = freq_perc[i]
     pos_snps[pos] = pos_counts
 
-
 temp_file_name = 'temp.fa'
 
 os.system("rm -f " + temp_file_name)
@@ -48,7 +51,6 @@ for position in positions:
     ref_bases[position] = ref_bases_file.readline().strip()
 
 os.system("rm -f " + temp_file_name)
-
 
 for i in range(20):
     vcf_iter_filename = 'temp_' + str(i) + '.vcf'
@@ -71,10 +73,10 @@ for i in range(20):
             pos_snps[position].pop(b)
     vcf_iter_file.close()
     gen_iter_pre = 'temp_gen_' + str(i)
-    c = "perl simuG.pl -refseq " + fa_file_name + " -snp_vcf " + vcf_iter_filename
+    c = "perl lib/simuG.pl -refseq " + fa_file_name + " -snp_vcf " + vcf_iter_filename + " -seed 201812201903"
     c += (" -prefix " + gen_iter_pre)
     os.system(c)
-    c = "./wgsim -1 150 -2 150 -r 0 -R 0 -X 0 -e 0.02 -N 3500 " + gen_iter_pre + ".simseq.genome.fa "
+    c = "wgsim -1 150 -2 150 -r 0 -R 0 -X 0 -e 0.02 -N 3500 -S " + str(seed_num) + " " + gen_iter_pre + ".simseq.genome.fa "
     c += (gen_iter_pre + "_1.fastq " + gen_iter_pre + "_2.fastq")
     os.system(c)
     os.system("cat " + gen_iter_pre + "_1.fastq >> " + reads_1_name)
