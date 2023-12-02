@@ -1,0 +1,10 @@
+BCR	NM_004327	https://www.ncbi.nlm.nih.gov/nuccore/NM_004327.4?report=fasta
+DDT	U49785.1	https://www.ncbi.nlm.nih.gov/nuccore/U49785.1?report=fasta
+DRICH1	AL080197.1	https://www.ncbi.nlm.nih.gov/nuccore/AL080197.1?report=fasta
+GNAZ	J03260.1	https://www.ncbi.nlm.nih.gov/nuccore/J03260.1?report=fasta
+GSTTB2	BC002415.1	https://www.ncbi.nlm.nih.gov/nuccore/BC002415.1?report=fasta
+IGLL1	M27749.1	https://www.ncbi.nlm.nih.gov/nuccore/M27749.1?report=fasta
+RAB36	AF133588.1	https://www.ncbi.nlm.nih.gov/nuccore/AF133588.1?report=fasta
+SLC2A11	AB209301.1	https://www.ncbi.nlm.nih.gov/nuccore/AB209301.1?report=fasta
+SMARCB1	AB017523.1	https://www.ncbi.nlm.nih.gov/nuccore/AB017523.1?report=fasta
+ZNF70	BC040161.1	https://www.ncbi.nlm.nih.gov/nuccore/BC040161.1?report=fasta
