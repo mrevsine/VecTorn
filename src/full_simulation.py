@@ -32,7 +32,7 @@ wgsim_read_length = 150
 wgsim_mutation_rate = 0
 wgsim_indel_frac = 0
 wgsim_indel_extension_prob = 0
-wgsim_base_error_rate = 0.02
+wgsim_base_error_rate = 0
 
 # Overall simulation params
 ref_coverage = 250
@@ -107,21 +107,6 @@ def create_random_SNP(seq):
   return SNP_locus, SNP_new_base, SNP_seq
   
 
-# Create a random SNP in each sequence from a list
-def create_random_SNPs(seqs):
-  SNP_loci = [random.randrange(len(seq)) for seq in seqs]
-  SNP_bases = [random.randrange(3) for _ in range(len(seqs))]
-  SNP_seqs = []
-  for i in range(len(seqs)):
-    seq = seqs[i]
-    SNP_locus = SNP_loci[i]
-    seq_locus_base = seq[SNP_locus].upper()
-    SNP_base_options = [c for c in ["A","C","G","T"] if c != seq_locus_base]
-    SNP_new_base = SNP_base_options[SNP_bases[i]]
-    SNP_seqs.append(seq[:SNP_locus] + SNP_new_base + seq[SNP_locus+1:])
-  return SNP_seqs
-
-
 # choose locus within a vector Multiple Cloning Site at which to split
 # for now just choose the midpoint
 # in the future, we may randomize this selection process
@@ -138,14 +123,14 @@ def perform_insert(vector_seq, vector_split_pos, insert_seq):
 
 # Starting with N genes and V vectors, create N*V recombinant sequences by inserting each gene into each vector
 # For each recombinant seq, create a SNP at a random position within the inserted gene
-def simulate_recombinant_sequences(gene_dict, vector_dict, vector_MCS_position_dict, out_fa):
+def simulate_recombinant_sequences(gene_seqs, vector_seqs, vector_MCS_position_dict, out_fa):
 
   recomb_seqs = []
   recomb_seq_names = []
  
   # simulate for each pair of gene and vector
-  for n,(gene_name,gene_seq) in enumerate(gene_dict.items()):
-    for v,(vector_name,vector_seq) in enumerate(vector_dict.items()):
+  for n,(gene_name,gene_seq) in enumerate(gene_seqs):
+    for v,(vector_name,vector_seq) in enumerate(vector_seqs):
 
       # Simulate `n_mutation_sims_per_recomb` times per gene,vector pair
       # In Vecuum, this was 2 times
@@ -199,6 +184,19 @@ def create_SNP_probabilities(n_loci, fa_seq_len):
   return pos_snps
 
 
+# Write probability table to file
+# snp_probs is a dict of {position:["A":%,"C":%, etc.]}
+def write_SNP_probabilities(snp_probs, probability_out_file):
+  positions = sorted(list(snp_probs.keys()))
+  with open(probability_out_file, "w") as f:
+    for pos in positions:
+      f.write(str(pos) + "\t")
+      pos_SNP_probs = snp_probs[pos]
+      pos_bases = sorted(list(pos_SNP_probs.keys()))
+      pos_base_probs = [pos_SNP_probs[base] / 20 for base in pos_bases]
+      f.write(",".join([base + ":" + str(prob) for base,prob in zip(pos_bases, pos_base_probs)]) + "\n") 
+
+
 # Get reference sequence base at a list of positions
 # Returns dict of {position:base}
 def get_reference_bases(ref_fa, ref_seq_name, positions):
@@ -216,7 +214,7 @@ def get_reference_bases(ref_fa, ref_seq_name, positions):
 
 
 # Create simulated mosaic reference sequences
-def simulate_mosaic_ref_seqs(n_sim_seqs, n_loci, ref_fa, ref_seq_name, ref_seq_len, out_fa):
+def simulate_mosaic_ref_seqs(n_sim_seqs, n_loci, ref_fa, ref_seq_name, ref_seq_len, out_fa, out_probability_file):
   
   # Create output directory
   os.system(f"rm -rf {temp_path}")
@@ -224,6 +222,7 @@ def simulate_mosaic_ref_seqs(n_sim_seqs, n_loci, ref_fa, ref_seq_name, ref_seq_l
 
   # Get SNP probabilities
   pos_snps = create_SNP_probabilities(n_loci, ref_seq_len)
+  write_SNP_probabilities(pos_snps, out_probability_file)
 
   # Get reference bases at SNP loci
   positions = list(pos_snps.keys())
@@ -272,7 +271,7 @@ def sim_paired_end_reads(fa_file, n_reads, out_temp_file_prefix):
 # Full pipeline
 # Simulate recombinant reads and mosaic reference sequences
 # Then take paired end reads from sequences
-def simulate_reads_with_vector_contamination(out_path, gene_dict, vector_dict, vector_MCS_position_dict, ref_fa, ref_seq_name, ref_seq_length): 
+def simulate_reads_with_vector_contamination(out_path, gene_seqs, vector_seqs, vector_MCS_position_dict, ref_fa, ref_seq_name, ref_seq_length): 
   
   print("RUNNING FULL SIMULATION")
 
@@ -285,23 +284,24 @@ def simulate_reads_with_vector_contamination(out_path, gene_dict, vector_dict, v
   # Simulate recombinant sequences
   print("SIMULATING RECOMBINANT SEQUENCES")
   recomb_seqs_fa = out_path + "/recomb_seqs.fa"
-  simulate_recombinant_sequences(gene_dict, vector_dict, vector_MCS_position_dict, recomb_seqs_fa)
+  simulate_recombinant_sequences(gene_seqs, vector_seqs, vector_MCS_position_dict, recomb_seqs_fa)
 
   # Simulate mosaic sequences  
   print("SIMULATING MOSAIC SEQUENCES")
   mosaic_ref_seqs_fa = out_path + "/mosaic_ref_seqs.fa"
-  simulate_mosaic_ref_seqs(n_mosaic_sim_seqs, n_mosaic_SNP_loci, ref_fa, ref_seq_name, ref_seq_length, mosaic_ref_seqs_fa)
+  mosaic_probability_file = out_path + "/mosaic_SNP_probabilities.txt"
+  simulate_mosaic_ref_seqs(n_mosaic_sim_seqs, n_mosaic_SNP_loci, ref_fa, ref_seq_name, ref_seq_length, mosaic_ref_seqs_fa, mosaic_probability_file)
 
   # Simulate paired-end reads from simulated recombinant sequences
   # First, get total length of recombinant sequences to determine num reads
   print("SIMULATING PAIRED-END READS FROM RECOMBINANT SEQUENCES")
   recomb_reads_prefix = temp_path + "/recomb_reads"
   total_recomb_seq_length = 0
-  n_genes = len(gene_dict.keys())
-  n_vectors = len(vector_dict.keys())
-  for seq in gene_dict.values():
+  n_genes = len(gene_seqs)
+  n_vectors = len(vector_seqs)
+  for seq in [tpl[1] for tpl in gene_seqs]:
     total_recomb_seq_length += len(seq) * n_vectors
-  for seq in vector_dict.values():
+  for seq in [tpl[1] for tpl in vector_seqs]:
     total_recomb_seq_length += len(seq) * n_genes
   total_recomb_seq_length *= n_mutation_sims_per_recomb
   n_recomb_reads = int((total_recomb_seq_length * recombinant_coverage) / (2 * wgsim_read_length))
@@ -350,14 +350,15 @@ def __read_needed_data__():
 
   # Read in gene fastas
   # Convert mRNA sequences to CDNA by removing polyA tail
-  gene_CDNA_dict = {}
+  gene_CDNA_seqs = []
   for gene_fa_file in gene_fa_files:
     gene_name = gene_fa_file.split(".")[0]
     with open(gene_path + gene_fa_file, "r") as f:
       lines = f.readlines()
     mrna_seq = "".join([line.rstrip() for line in lines[1:]])
     cdna_seq = remove_polyA_tail(mrna_seq)
-    gene_CDNA_dict[gene_name] = cdna_seq
+    gene_CDNA_seqs.append((gene_name, cdna_seq))
+  gene_CDNA_seqs.sort(key = lambda x: x[0]) # sort by gene name
 
   # read vector Multiple Cloning Site position file
   with open(vector_pos_bed, "r") as f:
@@ -369,15 +370,16 @@ def __read_needed_data__():
   vectors = list(vector_MCS_positions.keys())
 
   # read vector sequence files
-  vector_seqs = {}
+  vector_seqs = []
   for vector in vectors:
     with open(vector_path + vector + ".fa") as f:
       lines = f.readlines()
     vector_seq = "".join([line.rstrip() for line in lines[1:]])
-    vector_seqs[vector] = vector_seq
+    vector_seqs.append((vector,vector_seq))
+  vector_seqs.sort(key = lambda x: x[0]) # sort by vector name
 
   # Return needed variables
-  return gene_CDNA_dict, vector_seqs, vector_MCS_positions
+  return gene_CDNA_seqs, vector_seqs, vector_MCS_positions
 
 
 ###============================================================================
@@ -391,17 +393,12 @@ def __main__():
   reference_seq_length = 1000000
 
   # Load needed data
-  gene_dict, vector_dict, vector_MCS_positions_dict = __read_needed_data__()
-
-  # For simplicity, use 10 genes and 10 vectors
-  # Remove KP126802.1, the longest one
-  del vector_MCS_positions_dict["KP126802.1"]
-  del vector_dict["KP126802.1"]
+  gene_seqs, vector_seqs, vector_MCS_positions_dict = __read_needed_data__()
 
   # Run full data simulation  
   out_path = "data/full_sim2"
   random.seed(sim_seed)
-  simulate_reads_with_vector_contamination(out_path, gene_dict, vector_dict, vector_MCS_positions_dict, reference_seq_fa_file, reference_seq_name, reference_seq_length)
+  simulate_reads_with_vector_contamination(out_path, gene_seqs, vector_seqs, vector_MCS_positions_dict, reference_seq_fa_file, reference_seq_name, reference_seq_length)
 
 
 if __name__ == "__main__":
