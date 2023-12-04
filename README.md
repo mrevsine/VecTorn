@@ -12,3 +12,9 @@ Program to identify vector contamination in genomic reads
 For both the recombinant and reference mosaic sequences, we ran wgsim to randomly simulate paired-end reads of length 150bp with an end-to-end distance of 500 bases. We generated reads to reach a coverage of 250 for our reference mosaic sequences and a coverage of 1000 for our recombinant sequences. The paired-end reads for both sets of sequences were concatenated into one set of paired fastq files.
 #### Alignment to the reference region
 We aligned the paired fastq files to human chr22:23M-24M using Bowtie2.
+
+## Dependencies
+- python
+- numpy
+- wgsim
+- bowtie2
