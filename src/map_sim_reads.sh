@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
-sim_path=data/full_sim_0error
+sim_path=data/full_sim2
 fq1=${sim_path}/reads.1.fastq
 fq2=${sim_path}/reads.2.fastq
 ref_name=chr22_23M_24M
 ref_fa=data/ref/${ref_name}.fa
 ref_index_folder=data/ref/index
-ref_index=${ref_index}/${ref_name}
+ref_index=${ref_index_folder}/${ref_name}
 
 if [ ! -d $ref_index_folder ]; then
-  bowtie2-build $ref_fa $ref_index -q
+  mkdir $ref_index_folder
+  bowtie2-build -q $ref_fa $ref_index 
 fi
 
 n_threads=16
