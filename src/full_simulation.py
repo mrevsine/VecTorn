@@ -396,7 +396,7 @@ def __main__():
   gene_seqs, vector_seqs, vector_MCS_positions_dict = __read_needed_data__()
 
   # Run full data simulation  
-  out_path = "data/full_sim2"
+  out_path = "data/full_sim"
   random.seed(sim_seed)
   simulate_reads_with_vector_contamination(out_path, gene_seqs, vector_seqs, vector_MCS_positions_dict, reference_seq_fa_file, reference_seq_name, reference_seq_length)
 
