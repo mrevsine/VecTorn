@@ -12,16 +12,19 @@ def __main__():
 	# Bowtie params
 	bowtie_file_prefix = "data/ref/chr22_23M_24M"
 	bowtie_index_file_suffixes = ['.1.bt2', '.2.bt2', '.3.bt2', '.4.bt2', '.rev.1.bt2', '.rev.2.bt2']
-	bam_file = f"data/full_sum2/reads.bam"
+	output_bam_file = "data/full_sim2/reads.bam"
 	
 	missing_files = [file for file in bowtie_index_file_suffixes if not os.path.exists(bowtie_file_prefix + file)]
 	if missing_files:
 		print(f"Building bowtie2 index files for {reference_seq_fa_file}")
-		os.system("bowtie2-build " + reference_seq_fa_file + " " + bowtie_file_prefix)
+		os.system(f"bowtie2-build {reference_seq_fa_file} {bowtie_file_prefix}")
 		print("Index built")
 
 	print(f"Aligning {simread_file_prefix} to {reference_seq_fa_file} with bowtie2")
-	os.system(f"bowtie2 -x {bowtie_file_prefix} -1 {simread_fastq1} -2 {simread_fastq2} --very-fast -p 16 | samtools view -bS - > {bam_file} 2> {bam_file}.log")
+	os.system(f"bowtie2 -x {bowtie_file_prefix} -1 {simread_fastq1} -2 {simread_fastq2} --very-fast -p 16 | samtools view -bS - | {output_bam_file} 2> {output_bam_file}.log")
+	print(f"Alignment complete, at {output_bam_file}")
+
+	os.system()
 
 if __name__ == "__main__":
 	__main__()
