@@ -1,0 +1,5 @@
+In file included from bf_build.cpp:6:
+./common.hpp: In function 'char complement(char)':
+./common.hpp:36:1: warning: control reaches end of non-void function [-Wreturn-type]
+   36 | }
+      | ^

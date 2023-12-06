@@ -29,5 +29,5 @@ run_cmd(f"jellyfish count -m {k} -s {hash_size} -t {num_threads} -o {vec_name}.j
 run_cmd(f"jellyfish dump {vec_name}.jf | sed '/^>/d' > {vec_name}_kmers.txt")
 vec_distinct = get_output_cmd(f"wc -l < {vec_name}_kmers.txt")
 
-prob_error_rate = 0.0001
+prob_error_rate = 0.000001
 run_cmd(f"{bf_build_prg} {vec_name}_kmers.txt {vec_name}.bf {vec_distinct} {prob_error_rate}")
