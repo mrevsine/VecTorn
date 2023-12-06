@@ -14,6 +14,8 @@ ref_name = "data/ref/chr22"
 vec_name = "data/univec/univec"
 
 results_file = "results/kmer_compare.txt"
+# if not os.path.exists("results/"):
+# 	os.makedirs("results/")
 
 kmers = [11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31]
 hash_size = "100M"

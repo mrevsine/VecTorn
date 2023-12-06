@@ -37,6 +37,8 @@ int main(int argc, char* argv[])
    }
    in_file.close();
 
+   std::cout << "Filter size (bytes): " << filter.serialize(NullStream::ns) << std::endl;
+
    std::ofstream out_file(ds_file);
    filter.serialize(out_file);
    out_file.close();
