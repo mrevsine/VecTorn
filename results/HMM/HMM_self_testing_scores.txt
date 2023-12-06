@@ -1,0 +1,150 @@
+# Results for training an HMM using the chr22_23M_24M.fa file as a human reference and the univec.fa file as a vector reference, then testing on kmers from those same files
+# Basically a check to see if this method is high-powered enough to detect a difference between human and vector
+# k is the size of tokens used in the HMM
+# overlapping refers to whether the tokenization was overlapping or not, e.g. for the seq "AAACTT", overlapping = True yields ["AAA","AAC","ACT","CTT"] while overlapping = False yields ["AAA","CTT"]
+# These are not real results since you can't test on your training set, but they may be somewhat interesting
+
+TRAINING WITH k = 1 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.5374495626054305
+        Recall = 0.579541
+        F1 = 0.5577022177078858
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.5374495626054305
+        Recall = 0.579541
+        F1 = 0.5577022177078858
+TRAINING WITH k = 1 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.5374495626054305
+        Recall = 0.579541
+        F1 = 0.5577022177078858
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.5374495626054305
+        Recall = 0.579541
+        F1 = 0.5577022177078858
+TRAINING WITH k = 2 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.9443806953854103
+        Recall = 0.8847278847278848
+        F1 = 0.9135815599907477
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9424085636326648
+        Recall = 0.898694
+        F1 = 0.9200323093507725
+TRAINING WITH k = 2 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.9452241505096781
+        Recall = 0.8848998848998849
+        F1 = 0.9140678181448193
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9429617682774647
+        Recall = 0.899214
+        F1 = 0.9205684257726481
+TRAINING WITH k = 3 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.9032734656145796
+        Recall = 0.875497750995502
+        F1 = 0.889168747835466
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9326525440152655
+        Recall = 0.9384219384219384
+        F1 = 0.9355283463530762
+TRAINING WITH k = 3 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.9039369411453446
+        Recall = 0.8746547493094986
+        F1 = 0.8890547986838802
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9357663012134958
+        Recall = 0.9394719394719395
+        F1 = 0.9376154590066259
+TRAINING WITH k = 4 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8569833317865063
+        Recall = 0.8679776039328118
+        F1 = 0.8624454311183845
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9527143806780413
+        Recall = 0.945912
+        F1 = 0.9493010045863733
+TRAINING WITH k = 4 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8554135221333775
+        Recall = 0.8684646053938162
+        F1 = 0.8618896603946605
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9549816362894396
+        Recall = 0.945428
+        F1 = 0.9501808043835264
+TRAINING WITH k = 5 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8271852687607121
+        Recall = 0.8643814575258301
+        F1 = 0.8453744060394365
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9505092242907145
+        Recall = 0.96269
+        F1 = 0.9565608364405075
+TRAINING WITH k = 5 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8249005816261106
+        Recall = 0.8645784583138333
+        F1 = 0.844273597084506
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9512161571301541
+        Recall = 0.968105
+        F1 = 0.9595862728626617
+TRAINING WITH k = 6 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.81443367839474
+        Recall = 0.8655893279466398
+        F1 = 0.8392326744072743
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9503195593909227
+        Recall = 0.9679898719594878
+        F1 = 0.9590733315300909
+TRAINING WITH k = 6 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8113421824460345
+        Recall = 0.8608773043865219
+        F1 = 0.8353760693008345
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9553403313876859
+        Recall = 0.9741758967035868
+        F1 = 0.964666179467527
+TRAINING WITH k = 7 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8153588285825558
+        Recall = 0.8751282507695046
+        F1 = 0.8441869259129925
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9561992253110753
+        Recall = 0.9763329763329763
+        F1 = 0.9661612208283401
+TRAINING WITH k = 7 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.4384604872140478
+        Recall = 0.9817618905713434
+        F1 = 0.6061921056888783
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9833697272191605
+        Recall = 0.992992992992993
+        F1 = 0.9881579313995932
+TRAINING WITH k = 8 AND OVERLAPPING = True
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.8338987575294665
+        Recall = 0.9121823852766969
+        F1 = 0.8712856912251141
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9677661110894258
+        Recall = 0.991728
+        F1 = 0.9796005452498073
+TRAINING WITH k = 8 AND OVERLAPPING = False
+    TESTING WITH OVERLAPPING = True
+        Precision = 0.44267727822265585
+        Recall = 0.999979999859999
+        F1 = 0.6136848042016451
+    TESTING WITH OVERLAPPING = False
+        Precision = 0.9983706590843743
+        Recall = 1.0
+        F1 = 0.9991846653131045
