@@ -27,6 +27,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <iostream>
 
 
 static const std::size_t bits_per_char = 0x08;    // 8 bits in 1 char(unsigned)
@@ -526,6 +527,18 @@ public:
       in.read((char *)&random_seed_, sizeof(random_seed_));
       in.read((char *)&desired_false_positive_probability_, sizeof(desired_false_positive_probability_));
    }
+
+   void printValues() const {
+        std::cout << "salt_: Size: " << salt_.size() << std::endl;
+        std::cout << "bit_table_: Size: " << bit_table_.size() << std::endl;
+
+        std::cout << "salt_count_: " << salt_count_ << std::endl;
+        std::cout << "table_size_: " << table_size_ << std::endl;
+        std::cout << "projected_element_count_: " << projected_element_count_ << std::endl;
+        std::cout << "inserted_element_count_: " << inserted_element_count_ << std::endl;
+        std::cout << "random_seed_: " << random_seed_ << std::endl;
+        std::cout << "desired_false_positive_probability_: " << desired_false_positive_probability_ << std::endl;
+    }
 
 protected:
 
