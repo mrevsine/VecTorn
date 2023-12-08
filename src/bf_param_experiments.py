@@ -62,11 +62,9 @@ experiment_results = "results/bf/bf_param_experiments.txt"
 if not os.path.isfile(f"{subsample_read_file}"):
 	# run_cmd("awk 'NR==FNR {lines[$1]; next} FNR in lines {print; for (i=1; i<=3; i++) {getline; print}}' " + f"{subsample_lines} {sim_reads_file} > {subsample_read_file}")
 	print(f"Need to have {subsample_read_file} to run")
-	return 1
+	exit
 if not os.path.isfile(f"{subsample_class}"):
-	# run_cmd("awk '{print /^@chr22/ ? 0 : 1}' " + f"{subsample_read_file} > {subsample_class}")
-	print(f"Need to have {subsample_read_file} to run")
-	return 1
+	run_cmd("awk '/^@/ {print /^@chr22/ ? 0 : 1}' " + f"{subsample_read_file} > {subsample_class}")
 
 if not os.path.exists(bf_exe_folder):
 	os.makedirs(f"{bf_exe_folder}/")
