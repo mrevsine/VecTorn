@@ -27,8 +27,42 @@ _461: end position of read2
 #### Alignment to the reference region
 We aligned the paired fastq files to human chr22:23M-24M using Bowtie2.
 
+## How-to
+This guide illustrates how to obtain results on our simulated dataset. Most scripts for the methods can be modified to be applied to any file. All scripts are meant to be run from the root directory.
+
+### Simulate Reads
+Simulating the dataset, default to "VecTorn/data/full_sim", requires running the script:
+```console
+python3 srs/full_simulation.py
+```
+This creates reads.1.fastq and reads.2.fastq of nature described in above methods.
+
+### Bloom Filter
+These scripts can be edited by opening and editing the config paths. We default to data available on the repo or by our simulation. Underlying C++ code can also be used and given command line arguments, but not explored here.
+
+To explore distinct k-mers across UniVec and some reference (default chr22):
+```console
+python3 src/kmer_compare.py
+```
+
+To test various bloom filter parameters for UniVec filter against a subset of simulated reads:
+```console
+python3 src/bf_params_experiment.py
+```
+
+To build a bloom filter with default parameters (over UniVec):
+```console
+python3 src/build_vec_filter.py
+```
+
+To run a UniVec bloom filter with default parameters against the simulated reads:
+```console
+python3 src/run_vec_filter.py
+```
+
 ## Dependencies
 - python
 - numpy
 - wgsim
 - bowtie2
+- jellyfish
