@@ -4,12 +4,20 @@ import numpy as np
 import re
 
 def calculate_results(true_labels, predicted_labels_1, predicted_labels_2):
-    tp = np.sum((true_labels == 1) & (predicted_labels_1 == 1 or predicted_labels_2 == 1))
-    tn = np.sum((true_labels == 0) & (predicted_labels_1 == 0 and predicted_labels_2 == 0))
-    fp = np.sum((true_labels == 0) & (predicted_labels_1 == 1 or predicted_labels_2 == 1))
-    fn = np.sum((true_labels == 1) & (predicted_labels_1 == 0 and predicted_labels_2 == 0))
+    tp = np.sum((true_labels == 1) & ((predicted_labels_1 == 1) | (predicted_labels_2 == 1)))
+    tn = np.sum((true_labels == 0) & (predicted_labels_1 == 0) & (predicted_labels_2 == 0))
+    fp = np.sum((true_labels == 0) & ((predicted_labels_1 == 1) | (predicted_labels_2 == 1)))
+    fn = np.sum((true_labels == 1) & (predicted_labels_1 == 0) & (predicted_labels_2 == 0))
 
     return tp, tn, fp, fn
+
+def calculate_metrics(tp, tn, fp, fn):
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1 = 2 * (precision * recall) / (precision + recall)
+    accuracy = (tp + tn) / len(true_labels)
+
+    return precision, recall, f1, accuracy
 
 def parse_log(log_file):
 	time = 0.0
@@ -44,8 +52,8 @@ bf_run_prg = f"{bf_build_path}/bf_run"
 
 reads_1_file = "data/full_sim/reads.1.fastq"
 bf_result_1_file = "results/bf/bf_class_1.txt"
-reads_1_file = "data/full_sim/reads.2.fastq"
-bf_result_1_file = "results/bf/bf_class_2.txt"
+reads_2_file = "data/full_sim/reads.2.fastq"
+bf_result_2_file = "results/bf/bf_class_2.txt"
 reads_class = "data/full_sim/reads.class"
 
 all_results_file = "results/bf/full_sim.txt"
@@ -73,19 +81,26 @@ time_2, mem_2 = parse_log(log_file)
 
 predicted_labels_1 = np.loadtxt(bf_result_1_file, dtype=int)
 predicted_labels_2 = np.loadtxt(bf_result_2_file, dtype=int)
-tp, tn, fp, fn = calculate_metrics(true_labels, predicted_labels_1, predicted_labels_2)
+tp, tn, fp, fn = calculate_results(true_labels, predicted_labels_1, predicted_labels_2)
+precision, recall, f1, accuracy = calculate_metrics(tp, tn, fp, fn)
 
-with open(all_results_file, "w") as fp:
-	fp.write("READS.1\n")
-	fp.write(f"\ttime:\t{time_1}\n")
-	fp.write(f"\tmem:\t{mem_1}\n")
+with open(all_results_file, "w") as result_file:
+	result_file.write("READS.1\n")
+	result_file.write(f"\ttime:\t{time_1}\n")
+	result_file.write(f"\tmem:\t{mem_1}\n")
 
-	fp.write("READS.2\n")
-	fp.write(f"\ttime:\t{time_2}\n")
-	fp.write(f"\tmem:\t{mem_2}\n")
+	result_file.write("READS.2\n")
+	result_file.write(f"\ttime:\t{time_2}\n")
+	result_file.write(f"\tmem:\t{mem_2}\n")
 
-	fp.write("CLASS\n")
-	fp.write(f"tp:\t{tp}")
-	fp.write(f"tn:\t{tn}")
-	fp.write(f"fp:\t{fp}")
-	fp.write(f"fn:\t{fn}")
+	result_file.write("CLASS\n")
+	result_file.write(f"\ttp:\t{tp}\n")
+	result_file.write(f"\ttn:\t{tn}\n")
+	result_file.write(f"\tfp:\t{fp}\n")
+	result_file.write(f"\tfn:\t{fn}\n")
+
+	result_file.write("METRICS\n")
+	result_file.write(f"\tprecision:\t{precision}\n")
+	result_file.write(f"\trecall:\t{recall}\n")
+	result_file.write(f"\tf1:\t{f1}\n")
+	result_file.write(f"\taccuracy:\t{accuracy}\n")
