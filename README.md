@@ -45,7 +45,7 @@ To explore distinct k-mers across UniVec and some reference (default chr22):
 python3 src/kmer_compare.py
 ```
 
-To test various bloom filter parameters for UniVec filter against a subset of simulated reads:
+To test various bloom filter parameters for UniVec filter against a subset of simulated reads (requires optional file subsample.1.fastq):
 ```console
 python3 src/bf_params_experiment.py
 ```
@@ -59,6 +59,13 @@ To run a UniVec bloom filter with default parameters against the simulated reads
 ```console
 python3 src/run_vec_filter.py
 ```
+
+## Other Data
+[subsampled.1.fastq](https://livejohnshopkins-my.sharepoint.com/:u:/g/personal/nbrown99_jh_edu/EaFoDbuS9Q1JjwBXyKmOf3IB_VjyYvTZRXhKBPkHmtUxpA?e=qx6IkA)
+Used to evaluate bloom filter parameter experiments
+
+[full_sim.cram](https://livejohnshopkins-my.sharepoint.com/:u:/g/personal/nbrown99_jh_edu/ERBBmyPtJxBOqkB7HNRy7noB76i59kocJiw3JwHPLpNxiQ?e=aG0Q6t)
+Alignment to given chr22 subsection for simulated reads using bowtie2
 
 ## Dependencies
 - python
