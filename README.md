@@ -55,7 +55,7 @@ To build a bloom filter with default parameters (over UniVec):
 python3 src/build_vec_filter.py
 ```
 
-To run a UniVec bloom filter with default parameters against the simulated reads:
+To run a UniVec bloom filter with default parameters against the simulated reads (should use build script first):
 ```console
 python3 src/run_vec_filter.py
 ```
