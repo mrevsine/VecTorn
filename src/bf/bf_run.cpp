@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 
-#include "../lib/bloom_filter.hpp"
+#include "../../lib/bloom_filter.hpp"
 #include "./common.hpp"
 
 bool use_ref_bf = false;

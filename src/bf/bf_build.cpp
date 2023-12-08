@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 
-#include "../lib/bloom_filter.hpp"
+#include "../../lib/bloom_filter.hpp"
 #include "./common.hpp"
 
 int main(int argc, char* argv[])

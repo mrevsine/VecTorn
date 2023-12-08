@@ -42,28 +42,38 @@ def get_output_cmd (cmd):
 
 ref_name = "data/ref/chr22"
 vec_name = "data/univec/univec"
-bf_build_src = "src/bf_build.cpp"
-bf_run_src = "src/bf_run.cpp"
+
+bf_build_src = "src/bf/bf_build.cpp"
+bf_run_src = "src/bf/bf_run.cpp"
 bf_exe_folder = "build"
 bf_build_prg = f"{bf_exe_folder}/bf_build"
 bf_run_prg = f"{bf_exe_folder}/bf_run"
 
-subsample_read_file = "data/full_sim/subsample.1.fastq"
-subsample_class = "data/full_sim/subsample.class"
-subsample_lines = "data/full_sim/subsample_lines.txt"
+sim_path = "data/full_sim"
+sim_reads_file = f"{sim_path}/reads.1.fastq"
+subsample_read_file = f"{sim_path}/subsample.1.fastq"
+subsample_class = f"{sim_path}/subsample.class"
+subsample_lines = f"{sim_path}/subsample_lines.txt"
 
-bf_result_file = "results/bf_class.txt"
+bf_result_file = "results/bf/bf_class.txt"
 log_file = "results/log"
-experiment_results = "results/bf_param_experiments.txt"
+experiment_results = "results/bf/bf_param_experiments.txt"
 
 if not os.path.isfile(f"{subsample_read_file}"):
-	run_cmd(f"awk 'NR==FNR {{lines[$1]; next}} FNR in lines {{print; for (i=1; i<=3; i++) {{getline; print}}}}' {subsample_lines.txt} reads.1.fastq > {subsample_read_file}")
+	# run_cmd("awk 'NR==FNR {lines[$1]; next} FNR in lines {print; for (i=1; i<=3; i++) {getline; print}}' " + f"{subsample_lines} {sim_reads_file} > {subsample_read_file}")
+	print(f"Need to have {subsample_read_file} to run")
+	return 1
+if not os.path.isfile(f"{subsample_class}"):
+	# run_cmd("awk '{print /^@chr22/ ? 0 : 1}' " + f"{subsample_read_file} > {subsample_class}")
+	print(f"Need to have {subsample_read_file} to run")
+	return 1
+
 if not os.path.exists(bf_exe_folder):
-	os.makedirs(f"{bf_build_path}/")
+	os.makedirs(f"{bf_exe_folder}/")
 if not os.path.isfile(bf_build_prg):
 	run_cmd(f"g++ {bf_build_src} -o {bf_build_prg}")
 if not os.path.isfile(bf_run_prg):
-	run_cmd(f"g++ {bf_run_src} -o {bf_run_prg} -std=c++17")
+	run_cmd(f"g++ {bf_run_src} -o {bf_run_prg}")
 
 time_cmd = "/usr/bin/time --format=\"Wall Time: %e\nMax Memory: %M\""
 
