@@ -11,7 +11,7 @@ def get_output_cmd (cmd):
 
 ref_name = "data/ref/chr22"
 vec_name = "data/univec/univec"
-bf_build_src = "src/bf_build.cpp"
+bf_build_src = "src/bf/bf_build.cpp"
 bf_build_path = "build"
 bf_build_prg = f"{bf_build_path}/bf_build"
 
