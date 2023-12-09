@@ -66,12 +66,17 @@ which will print out the segments of the reference genome believed to contain so
 ### Running VecScreen/Vecuum
 To run VecScreen:
 ```console
-run_vecscreen.sh
+src/run_vecscreen.sh
 ```
 
 To run Vecuum:
 ```console
-run_vecuum.sh
+src/run_vecuum.sh
+```
+
+Next, to obtain FP, TP, FN, TN:
+```console
+python3 src/count_stats.py
 ```
 
 ## Methods
