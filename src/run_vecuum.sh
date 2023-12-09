@@ -5,13 +5,13 @@ alignment_dir=data/full_sim
 out_dir=data/comparisons/Vecuum
 
 # sort bam file (required by Vecuum)
-#/usr/local/samtools sort $alignment_dir/alignment.bam -o $alignment_dir/alignment.sorted.bam
+/usr/local/samtools sort $alignment_dir/alignment.bam -o $alignment_dir/alignment.sorted.bam
 
 # index bam file
-#/usr/local/samtools index $alignment_dir/alignment.sorted.bam
+/usr/local/samtools index $alignment_dir/alignment.sorted.bam
 
 # run Vecuum
-#java -jar /usr/local/Vecuum-1.0.1/Vecuum.jar -r $index_dir/chr22_23M_24M.fa -b $alignment_dir/alignment.sorted.bam -B /usr/local/bwa -S /usr/local/samtools -o $out_dir
+java -jar /usr/local/Vecuum-1.0.1/Vecuum.jar -r $index_dir/chr22_23M_24M.fa -b $alignment_dir/alignment.sorted.bam -B /usr/local/bwa -S /usr/local/samtools -o $out_dir
 
 # extract read names
 cut -f 2 $out_dir/*.contaminated.reads | sort | uniq > $out_dir/reads.contaminated.txt
