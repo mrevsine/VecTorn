@@ -33,7 +33,7 @@ This guide illustrates how to obtain results on our simulated dataset. Most scri
 ### Simulate Reads
 Simulating the dataset, default to "VecTorn/data/full_sim", requires running the script:
 ```console
-python3 srs/full_simulation.py
+python3 src/full_simulation.py
 ```
 This creates reads.1.fastq and reads.2.fastq of nature described in above methods.
 
