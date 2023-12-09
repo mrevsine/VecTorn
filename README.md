@@ -37,6 +37,17 @@ python3 src/full_simulation.py
 ```
 This creates reads.1.fastq and reads.2.fastq of nature described in above methods.
 
+### Hidden Markov Models
+Running the finalized version of the HMM with all optimal parameters:
+```console
+python3 src/HMM.py
+```
+
+Running testing of optimal parameters for the HMM:
+```console
+python3 src/HMM_testing.py
+```
+
 ### Bloom Filter
 These scripts can be edited by opening and editing the config paths. We default to data available on the repo or by our simulation. Underlying C++ code can also be used and given command line arguments, but not explored here.
 
