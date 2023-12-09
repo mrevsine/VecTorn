@@ -38,7 +38,7 @@ _1: start position of read1
 _461: end position of read2
 
 #### Alignment to the reference region
-We aligned the paired fastq files to human chr22:23M-24M using Bowtie2.
+We aligned the paired fastq files to human chr22:23M-24M using Bowtie2 with default parameters.
 
 ## How-to
 This guide illustrates how to obtain results on our simulated dataset. Most scripts for the methods can be modified to be applied to any file. All scripts are meant to be run from the root directory.
