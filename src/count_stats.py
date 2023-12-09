@@ -24,6 +24,6 @@ def countConfusionMatrix(out_dir, ext):
     return
 
 
-output_dir = "data/comparisons/Vecuum"
+output_dir = "results/comparisons/Vecuum"
 countConfusionMatrix(output_dir, ".contaminated.txt")
 countConfusionMatrix(output_dir, ".noncontaminated.txt")
