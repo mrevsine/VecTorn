@@ -71,7 +71,7 @@ Next, to run the script to get Recombinent Frames:
 ```console
 python3 src/find_recombinent_segments.py
 ```
-which will print out the segments of the reference genome believed to contain some amount of recombinant DNA. Not, this script may take over an hour to run.
+which will print out the segments of the reference genome believed to contain some amount of recombinant DNA. Not, this script may take over an hour to run. The results are printed in the results/framing folder.
 
 ## Other Data
 [subsampled.1.fastq](https://livejohnshopkins-my.sharepoint.com/:u:/g/personal/nbrown99_jh_edu/EaFoDbuS9Q1JjwBXyKmOf3IB_VjyYvTZRXhKBPkHmtUxpA?e=qx6IkA)
