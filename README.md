@@ -124,6 +124,7 @@ Alignment to given chr22 subsection for simulated reads using bowtie2
 - python
 - numpy
 - wgsim
+- simuG
 - bowtie2
 - jellyfish
 
