@@ -12,6 +12,7 @@ Program to identify vector contamination in genomic reads
 For both the recombinant and reference mosaic sequences, we ran wgsim to randomly simulate paired-end reads of length 150bp with an end-to-end distance of 500 bases. We generated reads to reach a coverage of 250 for our reference mosaic sequences and a coverage of 1000 for our recombinant sequences. The paired-end reads for both sets of sequences were concatenated into one set of paired fastq files.
 #### Generated Reads
 Example of vector-containing read:
+
 **@AF113968.2:1654_GNAZ:2679_1571:C:T_1216_1775_0:0:0_0:0:0_205d/2**
 @AF113968.2: name of vector
 _1654: position where we insert the gene in the vector
@@ -20,10 +21,12 @@ _2679: length of the inserted gene
 _1571: position within the inserted gene where C is substituted to T
 _1216: start position of read1
 _1775: end position of read2
+
 **@chr22:23000000-23999999_1_461_0:0:0_0:0:0_8f32d/1**
 @chr22:23000000-23999999: name of reference sequence
 _1: start position of read1
 _461: end position of read2
+
 #### Alignment to the reference region
 We aligned the paired fastq files to human chr22:23M-24M using Bowtie2.
 
