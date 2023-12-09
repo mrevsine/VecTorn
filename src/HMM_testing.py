@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import os
 import random
-import time
 
 ###=============================================================================
 # Set seed
@@ -131,10 +130,10 @@ def get_revcomp(seq):
 # Return visualization of emission probability table
 # Bar chart of probabilities for each component
 # Compare any 2 rows of emission table
-def visualize_emission_probability_table(E, i1=0, i2=1, name1="Vector", name2="Human", relative = False, savename = None):
+def visualize_emission_probability_table(E, i1=0, i2=1, name1="Human", name2="Vector", relative=False, savename=None):
   if relative:
     fig = plt.figure()
-    plt.bar([i for i in range(E.shape[1])], E[i2,:]-E[i1,:])
+    plt.bar([i for i in range(E.shape[1])], E[i1,:]-E[i2,:])
     plt.ylabel("Relative emission probability")
     plt.title("Human - vector emission probability")
   else:
@@ -214,8 +213,6 @@ simulation_path = data_path + "full_sim1/"
 reads1_fq = simulation_path + "reads.1.fastq"
 reads2_fq = simulation_path + "reads.2.fastq"
 
-#print("READING DATA")
-
 # Read in human region
 with open(ref_human_fa, "r") as f:
   lines = f.readlines()
@@ -282,30 +279,239 @@ print("Loaded", len(sim_seq_labels), "simulated sequences")
 print(str(len(sim_seq_labels)-sum(sim_seq_labels)) + " vector, " + str(sum(sim_seq_labels)) + " human") 
 
 ###=============================================================================
-# Run model on training and test data
+# Set revcomp for all trials
 
-# Model parameters
-k = 6
-transition_probability = 0.001
+revcomp = True
+
+###=============================================================================
+# Test k vs. transition probability
+# Hold overlap_train, overlap_test, and revcomp constant 
+
+print("##### TESTING k vs. TRANSITION PROBABILITY ON SIMULATED DATA SEQUENCES #####")
+
+training_seqs = [ref_vector_seq, ref_human_seq]
 overlapping_train = False
 overlapping_test = False
-revcomp = True
+
+print("Global parameters:")
+print("revcomp: " + str(revcomp) + ", overlapping_train: " + str(overlapping_train) + ", overlapping_test: " + str(overlapping_test))
+
+t_probs = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1]
+ks = [k for k in range(1,9)]
+
+S = np.array([1 / float(len(training_seqs)) for _ in range(len(training_seqs))])
+
+for k in ks:
+
+  E = build_emission_probability_table(training_seqs, k, overlapping_train, revcomp=revcomp)  
+  testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
+  testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+
+  for t_prob in t_probs:
+
+    print("TRAINING ON TRANSITION PROBABILITY =", str(t_prob), "k =", str(k))
+    T = build_transition_probability_table(t_prob, len(training_seqs))
+    model = MyHMM(n_components=len(training_seqs), emissions=E, transitions=T, starting_states=S)
+
+    predictions = model.predict(testing_kmers)
+
+    conf_mat = confusion_matrix(testing_labels, predictions, binary=True)
+    print("       ",conf_mat)
+    stats = conf_mat_stats(conf_mat)
+    print("        Precision = %s" % stats[0])
+    print("        Recall = %s" % stats[1])
+    print("        F1 = %s" % stats[2])
+
+print("==============================================================")
+
+###=============================================================================
+# Test out model architectures on training dataset
+
+print("##### TESTING k AND OVERLAP ON TRAINING DATA KMERS #####")
+
+# Put sequences into a list
+# 0th element is vector, 1st is human
+training_seqs = [ref_vector_seq, ref_human_seq]
+
+# Test on a variety of parameter values
+ks = [k for k in range(1,9)]
+overlapping_train_vals = [True,False]
+overlapping_test_vals = [True,False]
+for k in ks:
+  for overlapping_train in overlapping_train_vals:
+    print("TRAINING WITH k =", str(k), "AND OVERLAPPING =", overlapping_train)
+    model = get_HMM(training_seqs, k, overlapping=overlapping_train, revcomp=revcomp)    
+    for overlapping_test in overlapping_test_vals:
+      print("    TESTING WITH OVERLAPPING =", overlapping_test)
+      testing_kmers = [kmerize(seq,k,overlapping_test) for seq in training_seqs]
+      testing_labels = [[i for _ in testing_kmers[i]] for i in range(len(testing_kmers))]
+      predictions = model.predict(testing_kmers)
+      conf_mat = confusion_matrix(testing_labels, predictions, binary=False)
+      print("       ", conf_mat)
+      stats = conf_mat_stats(conf_mat)
+      print("        Precision = %s" % stats[0])
+      print("        Recall = %s" % stats[1])
+      print("        F1 = %s" % stats[2])
+
+print("==============================================================")
+
+###=============================================================================
+# Build model
 
 # Put sequences into a list
 training_seqs = [ref_vector_seq, ref_human_seq]
 
 # Initialize model
-model = get_HMM(training_seqs, k, overlapping=overlapping_train, transition_prob=transition_probability, revcomp=revcomp)
+k = 3
+overlapping_train = False
+model = get_HMM(training_seqs, k, overlapping=overlapping_train, revcomp=revcomp)
 
-# Test on simulated data
-testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
-testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+overlapping_test = True
+testing_kmers = [kmerize(seq,k,overlapping_test) for seq in training_seqs]
+testing_labels = [[i for _ in testing_kmers[i]] for i in range(len(testing_kmers))]
 predictions = model.predict(testing_kmers)
-
-# Print stats
 conf_mat = confusion_matrix(testing_labels, predictions)
 print(conf_mat)
 stats = conf_mat_stats(conf_mat)
 print("Precision = %s" % stats[0])
 print("Recall = %s" % stats[1])
 print("F1 = %s" % stats[2])
+
+###=============================================================================
+# Test model on simulated dataset
+
+# Get testing data
+overlapping_test = False
+overlap_str = "_o" if overlapping_test else "_u"
+test_data_file = "results/" + str(k) + "mers" + overlap_str + ".txt"
+if os.path.isfile(test_data_file):
+  #print("LOADING KMERIZED TEST DATA")
+  with open(test_data_file, "r") as f:
+    lines = f.readlines()
+  testing_kmers = [line.rstrip().split("\t") for line in lines]
+  del lines
+  testing_kmers = [[int(s) for s in terms] for terms in testing_kmers]
+else:
+  #print("KMERIZING TEST DATA")
+  testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
+  print("SAVING TEST DATA")
+  with open(test_data_file, "w") as f:
+    for X in testing_kmers:
+      f.write("\t".join([str(n) for n in X]) + "\n")
+del sim_reads_1
+del sim_reads_2
+
+# For now, label all kmers in a sequence with their overall label
+# i.e. if a read has any vector, call it all vector
+testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+
+# Test model
+predictions = model.predict(testing_kmers)
+
+# Get model accuracy
+conf_mat = confusion_matrix(testing_labels, predictions)
+print(conf_mat)
+stats = conf_mat_stats(conf_mat)
+print("Precision = %s" % stats[0])
+print("Recall = %s" % stats[1])
+print("F1 = %s" % stats[2])
+
+###=============================================================================
+# Test out model architectures on simulated reads
+
+print("##### TESTING k AND OVERLAP ON SIMULATED DATA KMERS #####")
+
+# Put sequences into a list
+training_seqs = [ref_vector_seq, ref_human_seq]
+
+# Test on a variety of parameter values
+ks = [k for k in range(1,9)]
+overlapping_train_vals = [True,False]
+overlapping_test_vals = [True,False]
+for k in ks:
+  for overlapping_train in overlapping_train_vals:
+    print("TRAINING WITH k =", str(k), "AND OVERLAPPING =", overlapping_train)
+    model = get_HMM(training_seqs, k, overlapping=overlapping_train, revcomp=revcomp)    
+    for overlapping_test in overlapping_test_vals:
+      print("    TESTING WITH OVERLAPPING =", overlapping_test)
+
+      testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
+      testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+
+      predictions = model.predict(testing_kmers)
+
+      conf_mat = confusion_matrix(testing_labels, predictions, binary=False)
+      print("       ",conf_mat)
+      stats = conf_mat_stats(conf_mat)
+      print("        Precision = %s" % stats[0])
+      print("        Recall = %s" % stats[1])
+      print("        F1 = %s" % stats[2])
+
+print("==============================================================")
+
+###=============================================================================
+# Test out model architectures on simulated reads
+
+print("##### TESTING k AND OVERLAP ON SIMULATED DATA SEQUENCES #####")
+
+# Put sequences into a list
+training_seqs = [ref_vector_seq, ref_human_seq]
+
+# Test on a variety of parameter values
+ks = [k for k in range(1,9)]
+overlapping_train_vals = [True,False]
+overlapping_test_vals = [True,False]
+for k in ks:
+  for overlapping_train in overlapping_train_vals:
+    print("TRAINING WITH k =", str(k), "AND OVERLAPPING =", overlapping_train)
+    model = get_HMM(training_seqs, k, overlapping=overlapping_train, revcomp=revcomp)    
+    for overlapping_test in overlapping_test_vals:
+      print("    TESTING WITH OVERLAPPING =", overlapping_test)
+
+      testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
+      testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+
+      predictions = model.predict(testing_kmers)
+
+      conf_mat = confusion_matrix(testing_labels, predictions, binary=True)
+      print("       ",conf_mat)
+      stats = conf_mat_stats(conf_mat)
+      print("        Precision = %s" % stats[0])
+      print("        Recall = %s" % stats[1])
+      print("        F1 = %s" % stats[2])
+
+print("==============================================================")
+
+###=============================================================================
+# For one successful model architecture, test effect of transition_prob
+
+print("##### TESTING TRANSITION PROBABILITY ON SIMULATED DATA SEQUENCES #####")
+
+training_seqs = [ref_vector_seq, ref_human_seq]
+t_probs = [0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1]
+k = 5
+overlapping_train = False
+S = np.array([1 / float(len(training_seqs)) for _ in range(len(training_seqs))])
+E = build_emission_probability_table(training_seqs, k, overlapping_train, revcomp=revcomp)
+  
+for t_prob in t_probs:
+  print("TRAINING ON TRANSITION PROBABILITY =", str(t_prob), "k=", str(k), "OVERLAPPING =", overlapping_train)
+  T = build_transition_probability_table(t_prob, len(training_seqs))
+  model = MyHMM(n_components=len(training_seqs), emissions=E, transitions=T, starting_states=S)
+
+  for overlapping_test in [True,False]:
+    print("    TESTING ON OVERLAPPING =", overlapping_test)
+    
+    testing_kmers = [kmerize(seq1,k,overlapping_test) + kmerize(seq2,k,overlapping_test) for seq1,seq2 in zip(sim_reads_1,sim_reads_2)]
+    testing_labels = [[sim_seq_labels[i] for _ in range(len(testing_kmers[i]))] for i in range(len(testing_kmers))]
+
+    predictions = model.predict(testing_kmers)
+
+    conf_mat = confusion_matrix(testing_labels, predictions, binary=True)
+    print("       ",conf_mat)
+    stats = conf_mat_stats(conf_mat)
+    print("        Precision = %s" % stats[0])
+    print("        Recall = %s" % stats[1])
+    print("        F1 = %s" % stats[2])
+
+print("==============================================================")
