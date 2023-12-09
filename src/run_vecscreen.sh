@@ -3,7 +3,7 @@
 # list of all paths
 vector_dir=data/univec/Univec_Core
 vector_db=$vector_dir/db
-query_out=data/comparisons/VecScreen/
+query_out=results/comparisons/VecScreen/
 ref_dir=data/full_sim
 
 # generate vector database if not yet generated
