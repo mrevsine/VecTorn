@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sim_path=data/full_sim2
+sim_path=data/full_sim
 fq1=${sim_path}/reads.1.fastq
 fq2=${sim_path}/reads.2.fastq
 ref_name=chr22_23M_24M
