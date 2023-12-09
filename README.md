@@ -60,6 +60,12 @@ To run a UniVec bloom filter with default parameters against the simulated reads
 python3 src/run_vec_filter.py
 ```
 
+### Recombinant Frames
+To run the script to get Recombinent Frames, ensure the aligned SAM file is present in the folder, named `align.sam`. Run using:
+```console
+python3 src/find_recombinent_segments.py
+```
+
 ## Other Data
 [subsampled.1.fastq](https://livejohnshopkins-my.sharepoint.com/:u:/g/personal/nbrown99_jh_edu/EaFoDbuS9Q1JjwBXyKmOf3IB_VjyYvTZRXhKBPkHmtUxpA?e=qx6IkA)
 Used to evaluate bloom filter parameter experiments
