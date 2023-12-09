@@ -76,3 +76,5 @@ Alignment to given chr22 subsection for simulated reads using bowtie2
 
 ## Third Party Code
 - [C++ Bloom Filter Library](http://www.partow.net/programming/bloomfilter/index.html)
+- [Read Simulation done with wgsim](https://github.com/lh3/wgsim)
+- [Genome with Variants Simulation done with simuG](https://github.com/yjx1217/simuG)
