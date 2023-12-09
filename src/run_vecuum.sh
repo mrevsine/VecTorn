@@ -2,7 +2,7 @@
 
 index_dir=data/ref/bwaidx
 alignment_dir=data/full_sim
-out_dir=data/comparisons/Vecuum
+out_dir=results/comparisons/Vecuum
 
 # sort bam file (required by Vecuum)
 /usr/local/samtools sort $alignment_dir/alignment.bam -o $alignment_dir/alignment.sorted.bam
