@@ -73,3 +73,6 @@ Alignment to given chr22 subsection for simulated reads using bowtie2
 - wgsim
 - bowtie2
 - jellyfish
+
+## Third Party Code
+- [C++ Bloom Filter Library](http://www.partow.net/programming/bloomfilter/index.html)
