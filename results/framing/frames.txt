@@ -1,0 +1,8 @@
+There may be a variant call from position 123449 to position 123970
+There may be a variant call from position 123970 to position 124201
+There may be a variant call from position 124218 to position 162638
+There may be a variant call from position 162694 to position 162916
+There may be a variant call from position 162916 to position 164110
+There may be a variant call from position 573238 to position 573587
+There may be a variant call from position 877055 to position 877173
+There may be a variant call from position 882547 to position 884026
