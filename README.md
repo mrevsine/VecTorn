@@ -61,10 +61,17 @@ python3 src/run_vec_filter.py
 ```
 
 ### Recombinant Frames
-To run the script to get Recombinent Frames, ensure the aligned SAM file is present in the folder, named `align.sam`. Run using:
+To run the Recombinant Frames code, we will need the alignments in SAM format. To convert the provided CRAM file provided below to a SAM file, run:
+```console
+samtools view -T data/ref/chr22_23M_24M.fa -o data/align/align.sam full_sim.cram
+```
+please note, this SAM file will be over 20 GB large.
+
+Next, to run the script to get Recombinent Frames:
 ```console
 python3 src/find_recombinent_segments.py
 ```
+which will print out the segments of the reference genome believed to contain some amount of recombinant DNA. Not, this script may take over an hour to run.
 
 ## Other Data
 [subsampled.1.fastq](https://livejohnshopkins-my.sharepoint.com/:u:/g/personal/nbrown99_jh_edu/EaFoDbuS9Q1JjwBXyKmOf3IB_VjyYvTZRXhKBPkHmtUxpA?e=qx6IkA)
