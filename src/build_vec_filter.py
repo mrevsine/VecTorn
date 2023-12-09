@@ -11,7 +11,7 @@ def get_output_cmd (cmd):
 
 ref_name = "data/ref/chr22"
 vec_name = "data/univec/univec"
-bf_build_src = "src/bf_build.cpp"
+bf_build_src = "src/bf/bf_build.cpp"
 bf_build_path = "build"
 bf_build_prg = f"{bf_build_path}/bf_build"
 
@@ -29,5 +29,5 @@ run_cmd(f"jellyfish count -m {k} -s {hash_size} -t {num_threads} -o {vec_name}.j
 run_cmd(f"jellyfish dump {vec_name}.jf | sed '/^>/d' > {vec_name}_kmers.txt")
 vec_distinct = get_output_cmd(f"wc -l < {vec_name}_kmers.txt")
 
-prob_error_rate = 0.0001
+prob_error_rate = 1e-6
 run_cmd(f"{bf_build_prg} {vec_name}_kmers.txt {vec_name}.bf {vec_distinct} {prob_error_rate}")
