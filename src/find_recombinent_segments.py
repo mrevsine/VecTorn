@@ -35,7 +35,7 @@ def find_frame(cigar, pos):
 
 ##### Reading in SAM File ##############
 
-sam_file = open('align.sam')
+sam_file = open('data/align/align.sam')
 
 ##### Reaching First Line on Align #####
 
